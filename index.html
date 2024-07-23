@@ -3,35 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Repeat Video</title>
+  <title>Fullscreen YouTube Video</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #000;
+      overflow: hidden;
     }
-    video {
-      width: 80%;
-      height: auto;
+
+    #video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 1000;
+    }
+
+    #player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <video id="video" controls muted loop>
-    <source src="https://drive.google.com/uc?export=download&id=1ZbHnhnq-w-5-dinnIrB5dRcu6qm_EGhQ" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+  <div id="video-container">
+    <div id="player"></div>
+  </div>
+
   <script>
-    const video = document.getElementById('video');
-    video.addEventListener('ended', () => {
-      video.currentTime = 0;
-      video.play();
-    });
-    video.play();
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    var startTime = 10; // 시작 시간 (초)
+    var endTime = 13; // 끝 시간 (초)
+    var checkInterval;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: 'tD-MPekRiWI', // 여기에 원하는 유튜브 비디오 ID를 넣으세요
+        playerVars: {
+          'autoplay': 1,
+          'mute': 1,
+          'controls': 0,
+          'showinfo': 0,
+          'modestbranding': 1,
+          'rel': 0,
+          'fs': 0,
+          'loop': 1,
+          'playlist': 'tD-MPekRiWI' // 여기에 원하는 유튜브 비디오 ID를 넣으세요
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      event.target.playVideo();
+      checkTime();
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        checkTime();
+      } else {
+        clearInterval(checkInterval);
+      }
+    }
+
+    function checkTime() {
+      clearInterval(checkInterval);
+      checkInterval = setInterval(function() {
+        var currentTime = player.getCurrentTime();
+        if (currentTime >= endTime) {
+          player.seekTo(startTime);
+        }
+      }, 500); // 0.5초마다 체크
+    }
   </script>
 </body>
 </html>
