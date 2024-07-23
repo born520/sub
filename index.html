@@ -3,91 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixed YouTube Video</title>
+  <title>Repeat Video</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* 스크롤바 숨김 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #000;
     }
-
-    #video-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
+    video {
       width: 80%;
-      height: 80%;
-      transform: translate(-50%, -50%);
-      background: #000;
-      z-index: 1000; /* 가장 높은 z-index 값 */
-    }
-
-    #player {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      height: auto;
     }
   </style>
 </head>
 <body>
-  <div id="video-container">
-    <div id="player"></div>
-  </div>
-
+  <video id="video" controls muted loop>
+    <source src="https://drive.google.com/uc?export=download&id=1ZbHnhnq-w-5-dinnIrB5dRcu6qm_EGhQ" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
   <script>
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    var player;
-    var startTime = 10; // 시작 시간 (초)
-    var endTime = 13; // 끝 시간 (초)
-    var checkInterval;
-
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        height: '100%',
-        width: '100%',
-        videoId: 'tD-MPekRiWI',
-        playerVars: {
-          'autoplay': 1,
-          'mute': 1,
-          'start': startTime,
-          'controls': 0
-        },
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
-        }
-      });
-    }
-
-    function onPlayerReady(event) {
-      event.target.playVideo();
-      checkTime();
-    }
-
-    function onPlayerStateChange(event) {
-      if (event.data == YT.PlayerState.PLAYING) {
-        checkTime();
-      } else {
-        clearInterval(checkInterval);
-      }
-    }
-
-    function checkTime() {
-      clearInterval(checkInterval);
-      checkInterval = setInterval(function() {
-        var currentTime = player.getCurrentTime();
-        if (currentTime >= endTime) {
-          player.seekTo(startTime);
-        }
-      }, 500); // 0.5초마다 체크
-    }
+    const video = document.getElementById('video');
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      video.play();
+    });
+    video.play();
   </script>
 </body>
 </html>
