@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sticky YouTube Video</title>
+  <title>Fixed YouTube Video</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
+      overflow: hidden; /* 스크롤바 숨김 */
     }
 
     #video-container {
       position: fixed;
-      top: 10px;
-      right: 10px;
-      width: 40%;  /* 너비를 40%로 설정 */
-      height: 40%; /* 높이를 40%로 설정 */
+      top: 50%;
+      left: 50%;
+      width: 80%;
+      height: 80%;
+      transform: translate(-50%, -50%);
       background: #000;
       z-index: 1000; /* 가장 높은 z-index 값 */
     }
@@ -28,23 +30,11 @@
       width: 100%;
       height: 100%;
     }
-
-    /* 예제용 컨텐츠 */
-    .content {
-      height: 2000px;
-      background: linear-gradient(to bottom, #ffffff, #cccccc);
-    }
   </style>
 </head>
 <body>
   <div id="video-container">
     <div id="player"></div>
-  </div>
-
-  <div class="content">
-    <h1>Scroll Down</h1>
-    <p>This is a long content page to demonstrate the fixed video player.</p>
-    <!-- 더 많은 컨텐츠를 여기에 추가할 수 있습니다 -->
   </div>
 
   <script>
