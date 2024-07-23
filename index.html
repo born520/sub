@@ -5,28 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sticky YouTube Video</title>
   <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
     #video-container {
       position: fixed;
       top: 10px;
       right: 10px;
-      width: 30%;
-      height: auto;
-      overflow: hidden;
-      max-width: 100%;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      width: 300px;
+      height: 200px;
+      background: #000;
+      z-index: 1000; /* 가장 높은 z-index 값 */
     }
-    iframe {
+
+    #player {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
     }
+
+    /* 예제용 컨텐츠 */
+    .content {
+      height: 2000px;
+      background: linear-gradient(to bottom, #ffffff, #cccccc);
+    }
   </style>
 </head>
 <body>
   <div id="video-container">
     <div id="player"></div>
+  </div>
+
+  <div class="content">
+    <h1>Scroll Down</h1>
+    <p>This is a long content page to demonstrate the fixed video player.</p>
+    <!-- 더 많은 컨텐츠를 여기에 추가할 수 있습니다 -->
   </div>
 
   <script>
@@ -36,8 +54,9 @@
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     var player;
-    var startTime = 26; // 시작 시간 (초)
-    var endTime = 36; // 끝 시간 (초)
+    var startTime = 10; // 시작 시간 (초)
+    var endTime = 13; // 끝 시간 (초)
+    var checkInterval;
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
@@ -48,9 +67,7 @@
           'autoplay': 1,
           'mute': 1,
           'start': startTime,
-          'end': endTime,
-          'loop': 1,
-          'playlist': 'tD-MPekRiWI'
+          'controls': 0
         },
         events: {
           'onReady': onPlayerReady,
@@ -61,12 +78,25 @@
 
     function onPlayerReady(event) {
       event.target.playVideo();
+      checkTime();
     }
 
     function onPlayerStateChange(event) {
-      if (event.data == YT.PlayerState.ENDED) {
-        player.seekTo(startTime);
+      if (event.data == YT.PlayerState.PLAYING) {
+        checkTime();
+      } else {
+        clearInterval(checkInterval);
       }
+    }
+
+    function checkTime() {
+      clearInterval(checkInterval);
+      checkInterval = setInterval(function() {
+        var currentTime = player.getCurrentTime();
+        if (currentTime >= endTime) {
+          player.seekTo(startTime);
+        }
+      }, 500); // 0.5초마다 체크
     }
   </script>
 </body>
